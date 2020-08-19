@@ -13,15 +13,15 @@
       "source.fixAll": true
     },
     "eslint.enable": true,
-    "eslint.workingDirectories": ["../*"],
-    "prettier.trailingComma": "all",
-    "prettier.tabWidth": 2,
-    "prettier.printWidth": 120
+    "eslint.workingDirectories": ["../"]
   },
   "extensions": {
     "recommendations": [
+      "EditorConfig.EditorConfig",
       "esbenp.prettier-vscode",
       "dbaeumer.vscode-eslint",
+      "DavidAnson.vscode-markdownlint",
+      "streetsidesoftware.code-spell-checker",
       "infeng.vscode-react-typescript",
       "mscolnick.export-typescript"
     ]
