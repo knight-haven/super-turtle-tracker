@@ -3,11 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Colors } from "../constants/Colors";
-import { useColorScheme } from "../hooks/useColorScheme";
+import { BottomTabParamList, Colors, TabOneParamList, TabTwoParamList } from "../../utils";
+import { useColorScheme } from "../../utils/hooks/useColorScheme";
 import { TabOneScreen } from "../screens/TabOneScreen";
 import { TabTwoScreen } from "../screens/TabTwoScreen";
-import { BottomTabParamList, TabOneParamList, TabTwoParamList } from "../types";
 
 const styles = StyleSheet.create({
   icon: {

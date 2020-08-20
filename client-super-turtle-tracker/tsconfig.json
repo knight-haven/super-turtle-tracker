@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": ["dom", "esnext"],
@@ -9,5 +10,5 @@
     "resolveJsonModule": true,
     "strict": true
   },
-  "include": ["typings/**/*.d.ts"]
+  "include": ["src", "src/utils/typings/**/*.d.ts"]
 }

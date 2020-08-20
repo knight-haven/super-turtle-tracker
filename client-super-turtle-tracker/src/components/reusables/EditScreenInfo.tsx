@@ -1,7 +1,7 @@
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Colors } from "../constants/Colors";
+import { Colors } from "../../utils";
 import { MonoText } from "./StyledText";
 import { Text, View } from "./Themed";
 
