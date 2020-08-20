@@ -1,21 +1,23 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as Font from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import * as React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import * as React from "react";
 
-export default function useCachedResources() {
+// import font = require("../assets/fonts/SpaceMono-Regular.ttf");
+
+export const useCachedResources = (): boolean => {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
-    async function loadResourcesAndDataAsync() {
+    const loadResourcesAndDataAsync = async () => {
       try {
         SplashScreen.preventAutoHideAsync();
 
         // Load fonts
         await Font.loadAsync({
           ...Ionicons.font,
-          'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+          // "space-mono": font,
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service
@@ -24,10 +26,10 @@ export default function useCachedResources() {
         setLoadingComplete(true);
         SplashScreen.hideAsync();
       }
-    }
+    };
 
     loadResourcesAndDataAsync();
   }, []);
 
   return isLoadingComplete;
-}
+};
