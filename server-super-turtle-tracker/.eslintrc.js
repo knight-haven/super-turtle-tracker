@@ -8,7 +8,6 @@ module.exports = {
   },
   extends: [
     "airbnb",
-    "airbnb/hooks",
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "prettier/@typescript-eslint",
@@ -18,5 +17,19 @@ module.exports = {
     ecmaVersion: 11,
   },
   plugins: ["@typescript-eslint", "typescript-sort-keys", "sort-keys-fix"],
-  rules: {},
+  rules: {
+    // Don't require extensions for the following files
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        js: "never",
+        jsx: "never",
+        ts: "never",
+        tsx: "never",
+      },
+    ],
+    "import/no-unresolved": "off",
+    radix: "off",
+  },
 };
