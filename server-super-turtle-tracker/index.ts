@@ -2,22 +2,21 @@
 import bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import express from "express";
-// eslint-disable-next-line import/extensions
-import { Queries as db } from "./queries";
+import * as db from "./queries";
 
 dotenv.config();
 const app: express.Application = express();
 
 const SECRET = process.env.BACKEND_SECRET;
 
-const getBearerToken = (request: express.Request) => {
+const getBearerToken = (request: express.Request, response: express.Response) => {
   let token = " ";
   if (request.headers.authorization !== undefined) {
     try {
-      const [_, tok] = request.headers.authorization.split(" ");
+      const [, tok] = request.headers.authorization.split(" ");
       token = tok;
     } catch (error) {
-      console.log("No bearer token given");
+      response.send(401).json("No Bearer Token given");
     }
   }
   return token;
@@ -36,7 +35,7 @@ app.get("/", (response: express.Response) => {
 
 // For every response..
 app.all("*", (req, res, next) => {
-  const token = getBearerToken(req);
+  const token = getBearerToken(req, res);
   if (token === SECRET) {
     app.get("/turtle", db.getTurtles);
     app.get("/turtle/:id", db.getTurtleById);
