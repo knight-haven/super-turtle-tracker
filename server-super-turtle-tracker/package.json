@@ -8,7 +8,8 @@
     "tsc": "tsc",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint-and-fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "prettier-format": "prettier --config ../.prettierrc.js '**/*.{json,js,jsx,ts,tsx,css,scss,md}' --write"
+    "prettier-format": "prettier --config ../.prettierrc.js '**/*.{json,js,jsx,ts,tsx,css,scss,md}' --write",
+    "postinstall": "npm run tsc"
   },
   "keywords": [],
   "author": "",
