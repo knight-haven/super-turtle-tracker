@@ -29,7 +29,7 @@ app.use(
   }),
 );
 
-app.get("/", (response: express.Response) => {
+app.get("/", (_request: express.Request, response: express.Response) => {
   response.json({ info: "Node.js, Express, and Postgres API" });
 });
 
