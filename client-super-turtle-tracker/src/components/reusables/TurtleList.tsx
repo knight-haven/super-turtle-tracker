@@ -7,8 +7,7 @@ import { Turtle } from "../../utils/interfaces/Turtle";
 import { TurtleListItem } from "./TurtleListItem";
 
 export const TurtleList = (): JSX.Element => {
-  // const [turtleList, setTurtleList] = useState<Turtle[]>([]);
-  const [{ data, loading, error, response }, refetch] = useAxios({
+  const [{ data, loading, error }, refetch] = useAxios({
     headers: { Authorization: `Bearer ${BACKEND_SECRET}` },
     url: `${BASE_URL}/turtle`,
   });
