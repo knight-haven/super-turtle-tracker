@@ -6,7 +6,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll",
+    "test": "jest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint-and-fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "prettier-format": "prettier --config ../.prettierrc.js '**/*.{json,js,jsx,ts,tsx,css,scss,md}' --write"
