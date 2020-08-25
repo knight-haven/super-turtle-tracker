@@ -1,0 +1,36 @@
+name: Install and Test
+
+on:
+  push:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  test-client-app:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./client-super-turtle-tracker
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+        npm ci
+      - name: Run tests
+        run: |
+        npm test
+
+  test-server-app:
+      runs-on: ubuntu-latest
+    env:
+      working-directory: ./server-super-turtle-tracker
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+        npm ci
+      - name: Run tests
+        run: |
+        npm test
