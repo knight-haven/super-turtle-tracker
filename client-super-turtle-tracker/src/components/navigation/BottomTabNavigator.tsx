@@ -1,4 +1,4 @@
-import { Entypo } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 // You can explore the built-in icon families and icons on the web at:
 // https://icons.expo.fyi/
 const TabBarIcon = (props: { color: string; name: string }) => {
-  return <Entypo size={30} style={styles.icon} {...props} />;
+  return <Ionicons size={30} style={styles.icon} {...props} />;
 };
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
@@ -61,7 +61,7 @@ export const BottomTabNavigator = (): JSX.Element => {
         name="Map"
         options={{
           tabBarIcon: ({ color }: { color: string }) => {
-            return <TabBarIcon color={color} name="map" />;
+            return <TabBarIcon color={color} name="ios-map" />;
           },
         }}
       />
@@ -70,7 +70,7 @@ export const BottomTabNavigator = (): JSX.Element => {
         name="List"
         options={{
           tabBarIcon: ({ color }: { color: string }) => {
-            return <TabBarIcon color={color} name="list" />;
+            return <TabBarIcon color={color} name="ios-list" />;
           },
         }}
       />
