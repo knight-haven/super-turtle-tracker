@@ -10,10 +10,10 @@ import createCsvWriter = require("csv-writer");
 const CsvWriter = createCsvWriter.createObjectCsvWriter;
 dotenv.config();
 const pool = new Pool.Pool({
-  user: process.env.DEV_PG_USER,
-  host: process.env.DEV_PG_HOST,
-  database: process.env.DEV_PG_DB,
-  password: process.env.DEV_PG_PW,
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DB,
+  password: process.env.PG_PW,
   port: parseInt(process.env.PG_PORT || ""),
   max: parseInt(process.env.PG_MAX || ""),
   min: parseInt(process.env.PG_MIN || ""),
