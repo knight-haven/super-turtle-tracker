@@ -6,14 +6,14 @@ export const LinkingConfiguration = {
       NotFound: "*",
       Root: {
         screens: {
-          TabOne: {
+          List: {
             screens: {
-              TabOneScreen: "one",
+              ListScreen: "two",
             },
           },
-          TabTwo: {
+          Map: {
             screens: {
-              TabTwoScreen: "two",
+              MapScreen: "one",
             },
           },
         },

@@ -19,12 +19,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TabOneScreen = (): JSX.Element => {
+export const MapScreen = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <Text style={styles.title}>Map</Text>
       <View darkColor="rgba(255,255,255,0.1)" lightColor="#eee" style={styles.separator} />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
+      <EditScreenInfo path="/screens/MapScreen.tsx" />
     </View>
   );
 };

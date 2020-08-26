@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
@@ -16,7 +16,7 @@ export const useCachedResources = (): boolean => {
 
         // Load fonts
         await Font.loadAsync({
-          ...Ionicons.font,
+          ...Entypo.font,
           // "space-mono": font,
         });
       } catch (e) {

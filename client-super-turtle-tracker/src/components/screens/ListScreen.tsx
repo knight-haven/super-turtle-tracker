@@ -4,9 +4,9 @@ import { TurtleList } from "../reusables/TurtleList";
 
 // const styles = StyleSheet.create({});
 
-export const TabTwoScreen = (): JSX.Element => {
+export const ListScreen = (): JSX.Element => {
   return (
-    <View>
+    <View darkColor="rgba(255,255,255,0.1)" lightColor="#eee">
       <TurtleList />
     </View>
   );
