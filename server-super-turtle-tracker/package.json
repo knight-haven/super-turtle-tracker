@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint-and-fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "prettier-format": "prettier --config ../.prettierrc.js '**/*.{json,js,jsx,ts,tsx,css,scss,md}' --write",
-    "postinstall": "dotenv cross-var echo %FIREBASE_CREDS% > firebase_creds.json && npm run tsc"
+    "postinstall": "dotenv cross-var echo $FIREBASE_CREDS > firebase_creds.json && npm run tsc"
   },
   "keywords": [],
   "author": "",
