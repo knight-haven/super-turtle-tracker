@@ -1,3 +1,4 @@
 const fs = require('fs');
 
-fs.writeFileSync('firebase_creds.json', process.env.PG_HOST);
+console.log(process.env.FIREBASE_CREDS)
+fs.writeFileSync('firebase_creds.json', process.env.FIREBASE_CREDS);
