@@ -4,4 +4,5 @@ export interface Turtle {
   mark: string;
   number: number;
   sex: string;
+  url: string;
 }

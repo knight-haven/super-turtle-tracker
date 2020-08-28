@@ -22,7 +22,7 @@ const getBearerToken = (request: express.Request, response: express.Response) =>
   return token;
 };
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
   bodyParser.urlencoded({
     extended: true,
