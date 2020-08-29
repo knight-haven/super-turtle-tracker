@@ -33,12 +33,12 @@ const bucket = admin.storage().bucket();
 export const getTurtles = (_request: express.Request, response: express.Response): void => {
   pool.query(
     `SELECT DISTINCT ON (turtle.id) turtle.id, turtle.mark, turtle.turtle_number AS number, turtle.sex,
-      CASE WHEN NOT photo.is_deleted THEN photo.name END AS avatar, photo.url
-    FROM turtle
-    FULL JOIN photo
-    ON turtle.id = photo.turtle_id
-    WHERE turtle.is_deleted = false
-    ORDER BY turtle.id`,
+        CASE WHEN NOT photo.is_deleted THEN photo.name END AS avatar, photo.url
+      FROM turtle
+      FULL JOIN photo
+      ON turtle.id = photo.turtle_id
+      WHERE turtle.is_deleted = false
+      ORDER BY turtle.id`,
     [],
     (error: Error, results: QueryResult<QueryResultRow>) => {
       if (error) {
