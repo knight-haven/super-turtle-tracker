@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Text as DefaultText, View as DefaultView } from "react-native";
+import { DefaultTheme } from "react-native-paper";
 import { Colors } from "../../utils";
 import { useColorScheme } from "../../utils/hooks/useColorScheme";
 
@@ -14,6 +15,19 @@ export const useThemeColor = (
     return colorFromProps;
   }
   return Colors[theme][colorName];
+};
+
+export const useTheme = (lightColor: string, darkColor: string): ReactNativePaper.Theme => {
+  const color = useThemeColor({ dark: darkColor, light: lightColor }, "background");
+  const scheme = useColorScheme();
+  return {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: color,
+    },
+    dark: scheme === "dark",
+  };
 };
 
 type ThemeProps = {

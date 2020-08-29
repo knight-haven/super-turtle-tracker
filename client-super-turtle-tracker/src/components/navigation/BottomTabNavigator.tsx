@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { BottomTabParamList, Colors, TabOneParamList, TabTwoParamList } from "../../utils";
+import { BottomTabParamList, Colors, ListParamList, MapParamList } from "../../utils";
 import { useColorScheme } from "../../utils/hooks/useColorScheme";
-import { TabOneScreen } from "../screens/TabOneScreen";
-import { TabTwoScreen } from "../screens/TabTwoScreen";
+import { ListScreen } from "../screens/ListScreen";
+import { MapScreen } from "../screens/MapScreen";
 
 const styles = StyleSheet.create({
   icon: {
@@ -22,31 +22,27 @@ const TabBarIcon = (props: { color: string; name: string }) => {
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabOneParamList>();
+const MapStack = createStackNavigator<MapParamList>();
 
-const TabOneNavigator = () => {
+const MapNavigator = () => {
   return (
-    <TabOneStack.Navigator>
-      <TabOneStack.Screen
-        component={TabOneScreen}
-        name="TabOneScreen"
-        options={{ headerTitle: "Tab One Title" }}
-      />
-    </TabOneStack.Navigator>
+    <MapStack.Navigator>
+      <MapStack.Screen component={MapScreen} name="MapScreen" options={{ headerTitle: "Map" }} />
+    </MapStack.Navigator>
   );
 };
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+const ListStack = createStackNavigator<ListParamList>();
 
-const TabTwoNavigator = () => {
+const ListNavigator = () => {
   return (
-    <TabTwoStack.Navigator>
-      <TabTwoStack.Screen
-        component={TabTwoScreen}
-        name="TabTwoScreen"
-        options={{ headerTitle: "Tab Two Title" }}
+    <ListStack.Navigator>
+      <ListStack.Screen
+        component={ListScreen}
+        name="ListScreen"
+        options={{ headerTitle: "Turtles" }}
       />
-    </TabTwoStack.Navigator>
+    </ListStack.Navigator>
   );
 };
 
@@ -57,24 +53,24 @@ export const BottomTabNavigator = (): JSX.Element => {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Map"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
     >
       <BottomTab.Screen
-        component={TabOneNavigator}
-        name="TabOne"
+        component={MapNavigator}
+        name="Map"
         options={{
           tabBarIcon: ({ color }: { color: string }) => {
-            return <TabBarIcon color={color} name="ios-code" />;
+            return <TabBarIcon color={color} name="ios-map" />;
           },
         }}
       />
       <BottomTab.Screen
-        component={TabTwoNavigator}
-        name="TabTwo"
+        component={ListNavigator}
+        name="List"
         options={{
           tabBarIcon: ({ color }: { color: string }) => {
-            return <TabBarIcon color={color} name="ios-code" />;
+            return <TabBarIcon color={color} name="ios-list" />;
           },
         }}
       />

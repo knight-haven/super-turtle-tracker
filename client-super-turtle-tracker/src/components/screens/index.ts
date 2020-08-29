@@ -1,3 +1,3 @@
 export * from "./NotFoundScreen";
-export * from "./TabOneScreen";
-export * from "./TabTwoScreen";
+export * from "./MapScreen";
+export * from "./ListScreen";
