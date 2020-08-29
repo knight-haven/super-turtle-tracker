@@ -7,6 +7,7 @@ import { BottomTabParamList, Colors, ListParamList, MapParamList } from "../../u
 import { useColorScheme } from "../../utils/hooks/useColorScheme";
 import { ListScreen } from "../screens/ListScreen";
 import { MapScreen } from "../screens/MapScreen";
+import { TurtleViewScreen } from "../screens/TurtleViewScreen";
 
 const styles = StyleSheet.create({
   icon: {
@@ -42,6 +43,7 @@ const ListNavigator = () => {
         name="ListScreen"
         options={{ headerTitle: "Turtles" }}
       />
+      <ListStack.Screen component={TurtleViewScreen} name="TurtleViewScreen" />
     </ListStack.Navigator>
   );
 };
