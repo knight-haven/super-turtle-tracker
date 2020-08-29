@@ -1,11 +1,14 @@
 import { ObjectMap } from "csv-writer/src/lib/lang/object";
 import * as dotenv from "dotenv";
 import { QueryResult, QueryResultRow } from "pg";
+import { v4 as uuid } from "uuid";
 import Pool = require("pg");
 import express = require("express");
 import fs = require("fs");
 import sgMail = require("@sendgrid/mail");
 import createCsvWriter = require("csv-writer");
+import admin = require("firebase-admin");
+import serviceAccount = require("./firebase_creds.json");
 
 const CsvWriter = createCsvWriter.createObjectCsvWriter;
 dotenv.config();
@@ -21,9 +24,15 @@ const pool = new Pool.Pool({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
+});
+const bucket = admin.storage().bucket();
+
 export const getTurtles = (_request: express.Request, response: express.Response): void => {
   pool.query(
-    `SELECT DISTINCT ON (turtle.id) turtle.id, turtle.mark, turtle.turtle_number AS number, turtle.sex, photo.name AS avatar
+    `SELECT DISTINCT ON (turtle.id) turtle.id, turtle.mark, turtle.turtle_number AS number, turtle.sex, photo.name AS avatar, photo.url
       FROM turtle, photo
       WHERE turtle.is_deleted = false AND photo.is_deleted = false AND turtle.id = photo.turtle_id
       ORDER BY id`,
@@ -310,18 +319,50 @@ export const getPhotoById = (request: express.Request, response: express.Respons
 };
 
 export const createPhoto = (request: express.Request, response: express.Response): void => {
-  const { turtleId, sightingId, name } = request.body;
+  // https://groups.google.com/g/firebase-talk/c/aDJvYyNIJik?pli=1
+  // https://stackoverflow.com/questions/60922198/firebase-storage-upload-image-file-from-node-js
+  const { turtleId, sightingId, imageData } = request.body;
+  const fileName: string = uuid();
 
-  pool.query(
-    `INSERT INTO photo (turtle_id, sighting_id, name)
-      VALUES ($1, $2, $3)
-      RETURNING id`,
-    [turtleId, sightingId, name],
-    (error: Error, results: QueryResult<{ id: number }>) => {
-      if (error) {
-        response.status(400).json(error.message);
+  const imageBuffer = Buffer.from(imageData, "base64");
+  const metadata = {
+    metadata: {
+      // This line is very important. It's to create a download token.
+      firebaseStorageDownloadTokens: uuid(),
+    },
+    contentType: "image/jpeg",
+    cacheControl: "public, max-age=31536000",
+  };
+
+  const file = bucket.file(`images/${fileName}`);
+  file.save(
+    imageBuffer,
+    {
+      metadata,
+    },
+    async (uploadError) => {
+      if (uploadError) {
+        response.status(400).send(uploadError.message);
       } else {
-        response.status(201).send(`${results.rows[0].id}`);
+        const url = (
+          await file.getSignedUrl({
+            action: "read",
+            expires: "03-09-2491",
+          })
+        )[0];
+        pool.query(
+          `INSERT INTO photo (turtle_id, sighting_id, name, url)
+                  VALUES ($1, $2, $3, $4)
+                  RETURNING id`,
+          [turtleId, sightingId, fileName, url],
+          (queryError: Error, results: QueryResult<{ id: number }>) => {
+            if (queryError) {
+              response.status(400).json(queryError.message);
+            } else {
+              response.status(201).send(`${results.rows[0].id}`);
+            }
+          },
+        );
       }
     },
   );
