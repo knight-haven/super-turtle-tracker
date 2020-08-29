@@ -1,9 +1,8 @@
 import useAxios from "axios-hooks";
 import * as React from "react";
-import { ScrollView } from "react-native";
+import { FlatList } from "react-native";
 import { View } from ".";
 import { BACKEND_SECRET, BASE_URL } from "../../../env";
-import { Turtle } from "../../utils/interfaces/Turtle";
 import { TurtleListItem } from "./TurtleListItem";
 
 export const TurtleList = (): JSX.Element => {
@@ -15,11 +14,15 @@ export const TurtleList = (): JSX.Element => {
   return (
     <View>
       {loading || error ? undefined : (
-        <ScrollView>
-          {data.map((item: Turtle) => {
+        <FlatList
+          data={data}
+          keyExtractor={(item) => {
+            return item.id.toString();
+          }}
+          renderItem={({ item }) => {
             return <TurtleListItem key={item.id} turtle={item} />;
-          })}
-        </ScrollView>
+          }}
+        />
       )}
     </View>
   );
