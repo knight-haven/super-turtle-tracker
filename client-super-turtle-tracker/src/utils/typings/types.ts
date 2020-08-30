@@ -14,5 +14,5 @@ export type MapParamList = {
 
 export type ListParamList = {
   ListScreen: undefined;
-  TurtleViewScreen: undefined;
+  TurtleViewScreen: { turtleId: number };
 };
