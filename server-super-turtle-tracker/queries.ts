@@ -33,12 +33,15 @@ const bucket = admin.storage().bucket();
 export const getTurtles = (_request: express.Request, response: express.Response): void => {
   pool.query(
     `SELECT DISTINCT ON (turtle.id) turtle.id, turtle.mark, turtle.turtle_number AS number, turtle.sex,
-        CASE WHEN NOT photo.is_deleted THEN photo.name END AS avatar, photo.url
+        CASE WHEN NOT photo.is_deleted THEN photo.url END AS url
       FROM turtle
       FULL JOIN photo
-      ON turtle.id = photo.turtle_id
+      ON turtle.id = photo.turtle_id, sighting
       WHERE turtle.is_deleted = false
-      ORDER BY turtle.id`,
+        AND (turtle.id = sighting.turtle_id
+        AND sighting.id = photo.sighting_id
+        OR photo.is_deleted is null)
+      ORDER BY turtle.id, sighting.time_seen DESC, photo.id`,
     [],
     (error: Error, results: QueryResult<QueryResultRow>) => {
       if (error) {
