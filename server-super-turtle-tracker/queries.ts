@@ -10,6 +10,38 @@ import createCsvWriter = require("csv-writer");
 import admin = require("firebase-admin");
 import serviceAccount = require("./firebase_creds.json");
 
+interface Turtle {
+  id: number;
+  mark: string;
+  number: number;
+  sex: string;
+}
+
+interface Sighting {
+  id: number;
+  turtleId: number;
+  time: Date;
+  location: string;
+  latitude: number;
+  longitude: number;
+  length: number;
+  notes: string;
+}
+
+interface Photo {
+  id: number;
+  turtleId: number;
+  sightingId: number;
+  name: string;
+  url: string;
+}
+
+interface TurtleSightingPhoto {
+  turtle: Turtle | undefined;
+  sightings: Sighting[] | undefined;
+  photos: Photo[] | undefined;
+}
+
 const CsvWriter = createCsvWriter.createObjectCsvWriter;
 dotenv.config();
 const pool = new Pool.Pool({
@@ -418,6 +450,59 @@ export const getPhotoByTurtleId = (request: express.Request, response: express.R
         response.status(400).json(error.message);
       } else {
         response.status(200).json(results.rows);
+      }
+    },
+  );
+};
+
+export const getTurtleSightingsAndPhotosByTurtleId = (
+  request: express.Request,
+  response: express.Response,
+): void => {
+  const turtleId = parseInt(request.params.turtleId);
+  const finalObj: TurtleSightingPhoto = {
+    turtle: undefined,
+    sightings: undefined,
+    photos: undefined,
+  };
+
+  pool.query(
+    `SELECT *
+      FROM turtle
+      WHERE id = $1 AND is_deleted = false`,
+    [turtleId],
+    (turtleError: Error, turtleResults: QueryResult<Turtle>) => {
+      if (turtleError) {
+        response.status(400).json(turtleError.message);
+      } else {
+        [finalObj.turtle] = turtleResults.rows;
+        pool.query(
+          `SELECT *
+            FROM sighting
+            WHERE turtle_id = $1 AND is_deleted = false`,
+          [turtleId],
+          (sightingError: Error, sightingResults: QueryResult<Sighting>) => {
+            if (sightingError) {
+              response.status(400).json(sightingError.message);
+            } else {
+              finalObj.sightings = sightingResults.rows;
+              pool.query(
+                `SELECT *
+                  FROM photo
+                  WHERE turtle_id = $1 AND is_deleted = false`,
+                [turtleId],
+                (photoError: Error, photoResults: QueryResult<Photo>) => {
+                  if (photoError) {
+                    response.status(400).json(photoError.message);
+                  } else {
+                    finalObj.photos = photoResults.rows;
+                    response.status(200).json(finalObj);
+                  }
+                },
+              );
+            }
+          },
+        );
       }
     },
   );
