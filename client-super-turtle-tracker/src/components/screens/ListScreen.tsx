@@ -1,20 +1,11 @@
 import * as React from "react";
-import { ListScreenNavigationContext, ListScreenNavigationProp } from "../../utils/constants";
-import { View } from "../reusables";
 import { TurtleList } from "../custom/TurtleList";
+import { View } from "../reusables";
 
-// const styles = StyleSheet.create({});
-
-export const ListScreen = ({
-  navigation,
-}: {
-  navigation: ListScreenNavigationProp;
-}): JSX.Element => {
+export const ListScreen = (): JSX.Element => {
   return (
-    <ListScreenNavigationContext.Provider value={navigation}>
-      <View>
-        <TurtleList />
-      </View>
-    </ListScreenNavigationContext.Provider>
+    <View>
+      <TurtleList />
+    </View>
   );
 };
