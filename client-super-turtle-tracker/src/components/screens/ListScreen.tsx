@@ -12,7 +12,7 @@ export const ListScreen = ({
 }): JSX.Element => {
   return (
     <ListScreenNavigationContext.Provider value={navigation}>
-      <View darkColor="rgba(255,255,255,0.1)" lightColor="#eee">
+      <View>
         <TurtleList />
       </View>
     </ListScreenNavigationContext.Provider>

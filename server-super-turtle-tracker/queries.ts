@@ -479,7 +479,8 @@ export const getTurtleSightingsAndPhotosByTurtleId = (
         pool.query(
           `SELECT id, turtle_id as turtleid, time_seen as time, turtle_location as location, latitude, longitude, carapace_length as length, notes
             FROM sighting
-            WHERE turtle_id = $1 AND is_deleted = false`,
+            WHERE turtle_id = $1 AND is_deleted = false
+            ORDER BY time_seen DESC`,
           [turtleId],
           (sightingError: Error, sightingResults: QueryResult<Sighting>) => {
             if (sightingError) {
@@ -489,7 +490,8 @@ export const getTurtleSightingsAndPhotosByTurtleId = (
               pool.query(
                 `SELECT id, turtle_id as turtleid, sighting_id as sightingid, name, url
                   FROM photo
-                  WHERE turtle_id = $1 AND is_deleted = false`,
+                  WHERE turtle_id = $1 AND is_deleted = false
+                  ORDER BY id`,
                 [turtleId],
                 (photoError: Error, photoResults: QueryResult<Photo>) => {
                   if (photoError) {
