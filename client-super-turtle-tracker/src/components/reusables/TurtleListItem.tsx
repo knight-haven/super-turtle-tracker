@@ -20,7 +20,7 @@ export const TurtleListItem = ({ turtle }: { turtle: Turtle }): JSX.Element => {
     <List.Item
       description={capitalizeFirstLetter(turtle.sex)}
       left={(props) => {
-        return <Avatar.Image {...props} source={{ uri: turtle.url }} />;
+        return <Avatar.Image {...props} source={turtle.url === null ? {} : { uri: turtle.url }} />;
       }}
       onPress={() => {
         navigation?.navigate("TurtleViewScreen", { turtleId: turtle.id });
