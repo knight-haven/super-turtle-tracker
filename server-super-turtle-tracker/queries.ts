@@ -19,8 +19,7 @@ interface Turtle {
 
 interface Sighting {
   id: number;
-  turtleid: number;
-  time: Date;
+  time: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -30,8 +29,6 @@ interface Sighting {
 
 interface Photo {
   id: number;
-  turtleid: number;
-  sightingid: number;
   name: string;
   url: string;
 }
@@ -483,7 +480,7 @@ export const getTurtleSightingsAndPhotosByTurtleId = (
       } else {
         [finalObj.turtle] = turtleResults.rows;
         pool.query(
-          `SELECT id, turtle_id as turtleid, time_seen as time, turtle_location as location, latitude, longitude, carapace_length as length, notes
+          `SELECT id, time_seen as time, turtle_location as location, latitude, longitude, carapace_length as length, notes
             FROM sighting
             WHERE turtle_id = $1 AND is_deleted = false
             ORDER BY time_seen DESC`,
@@ -494,7 +491,7 @@ export const getTurtleSightingsAndPhotosByTurtleId = (
             } else {
               finalObj.sightings = sightingResults.rows;
               pool.query(
-                `SELECT id, turtle_id as turtleid, sighting_id as sightingid, name, url
+                `SELECT id, name, url
                   FROM photo
                   WHERE turtle_id = $1 AND is_deleted = false
                   ORDER BY id`,

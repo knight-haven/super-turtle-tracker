@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ListScreenNavigationContext, ListScreenNavigationProp } from "../../utils/constants";
 import { View } from "../reusables";
-import { TurtleList } from "../reusables/TurtleList";
+import { TurtleList } from "../custom/TurtleList";
 
 // const styles = StyleSheet.create({});
 
