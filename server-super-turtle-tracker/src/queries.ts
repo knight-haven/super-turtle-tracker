@@ -2,25 +2,19 @@ import { ObjectMap } from "csv-writer/src/lib/lang/object";
 import * as dotenv from "dotenv";
 import { QueryResult, QueryResultRow } from "pg";
 import { v4 as uuid } from "uuid";
-import Pool = require("pg");
+import pool from "./db/pool";
+import * as queries from "./db/queries";
+import { status } from "./helpers/status";
+import admin = require("firebase-admin");
+import createCsvWriter = require("csv-writer");
 import express = require("express");
 import fs = require("fs");
 import sgMail = require("@sendgrid/mail");
-import createCsvWriter = require("csv-writer");
-import admin = require("firebase-admin");
-import serviceAccount = require("./firebase_creds.json");
+
+import serviceAccount = require("../firebase_creds.json");
 
 const CsvWriter = createCsvWriter.createObjectCsvWriter;
 dotenv.config();
-const pool = new Pool.Pool({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DB,
-  password: process.env.PG_PW,
-  port: parseInt(process.env.PG_PORT || ""),
-  max: parseInt(process.env.PG_MAX || ""),
-  min: parseInt(process.env.PG_MIN || ""),
-});
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
@@ -31,59 +25,38 @@ admin.initializeApp({
 const bucket = admin.storage().bucket();
 
 export const getTurtles = (_request: express.Request, response: express.Response): void => {
-  pool.query(
-    `SELECT DISTINCT ON (turtle.id) turtle.id, turtle.mark, turtle.turtle_number AS number, turtle.sex,
-        CASE WHEN NOT photo.is_deleted THEN photo.url END AS url
-      FROM turtle
-      FULL JOIN photo
-      ON turtle.id = photo.turtle_id, sighting
-      WHERE turtle.is_deleted = false
-        AND (turtle.id = sighting.turtle_id
-        AND sighting.id = photo.sighting_id
-        OR photo.is_deleted is null)
-      ORDER BY turtle.id, sighting.time_seen DESC, photo.id`,
-    [],
-    (error: Error, results: QueryResult<QueryResultRow>) => {
-      if (error) {
-        response.status(400).json(error.message);
-      } else {
-        response.status(200).json(results.rows);
-      }
-    },
-  );
+  pool.query(queries.getTurtles, [], (error: Error, results: QueryResult<QueryResultRow>) => {
+    if (error) {
+      response.status(status.error).json(error.message);
+    } else {
+      response.status(status.success).json(results.rows);
+    }
+  });
 };
 
 export const getTurtleById = (request: express.Request, response: express.Response): void => {
   const id = parseInt(request.params.id);
 
-  pool.query(
-    `SELECT *
-      FROM turtle
-      WHERE id = $1 AND is_deleted = false`,
-    [id],
-    (error: Error, results: QueryResult<QueryResultRow>) => {
-      if (error) {
-        response.status(400).json(error.message);
-      } else {
-        response.status(200).json(results.rows);
-      }
-    },
-  );
+  pool.query(queries.getTurtleById, [id], (error: Error, results: QueryResult<QueryResultRow>) => {
+    if (error) {
+      response.status(status.error).json(error.message);
+    } else {
+      response.status(status.success).json(results.rows);
+    }
+  });
 };
 
 export const createTurtle = (request: express.Request, response: express.Response): void => {
   const { number, mark, sex } = request.body;
 
   pool.query(
-    `INSERT INTO turtle (turtle_number, mark, sex)
-      VALUES ($1, $2, $3)
-      RETURNING id`,
+    queries.createTurtle,
     [number, mark, sex],
     (error: Error, results: QueryResult<{ id: number }>) => {
       if (error) {
-        response.status(400).json(error.message);
+        response.status(status.error).json(error.message);
       } else {
-        response.status(201).send(`${results.rows[0].id}`);
+        response.status(status.created).send(`${results.rows[0].id}`);
       }
     },
   );
@@ -93,52 +66,40 @@ export const updateTurtle = (request: express.Request, response: express.Respons
   const id = parseInt(request.params.id);
   const { number, mark, sex } = request.body;
 
-  pool.query(
-    `UPDATE turtle
-      SET turtle_number = $1, mark = $2, sex = $3
-      WHERE id = $4`,
-    [number, mark, sex, id],
-    (error: Error) => {
-      if (error) {
-        response.status(400).json(error.message);
-      } else {
-        response.status(200).send(`Turtle modified with ID: ${id}`);
-      }
-    },
-  );
+  pool.query(queries.updateTurtle, [number, mark, sex, id], (error: Error) => {
+    if (error) {
+      response.status(status.error).json(error.message);
+    } else {
+      response.status(status.success).send(`Turtle modified with ID: ${id}`);
+    }
+  });
 };
 
 export const deleteTurtle = (request: express.Request, response: express.Response): void => {
   const id = parseInt(request.params.id);
 
   pool.query(
-    `UPDATE turtle
-      SET is_deleted = true
-      WHERE id = $1`,
+    queries.deleteTurtle,
     [id],
     (turtleError: Error) => {
       if (turtleError) {
-        response.status(400).json(turtleError);
+        response.status(status.error).json(turtleError);
       } else {
         pool.query(
-          `UPDATE sighting
-            SET is_deleted = true
-            WHERE turtle_id = $1`,
+          queries.deleteSighting,
           [id],
           (sightingError: Error) => {
             if (sightingError) {
-              response.status(400).json(sightingError);
+              response.status(status.error).json(sightingError);
             } else {
               pool.query(
-                `UPDATE photo
-                  SET is_deleted = true
-                  WHERE turtle_id = $1`,
+                queries.deletePhoto,
                 [id],
                 (photoError: Error) => {
                   if (photoError) {
-                    response.status(400).json(photoError);
+                    response.status(status.error).json(photoError);
                   } else {
-                    response.status(200).send(`Turtle deleted with ID: ${id}`);
+                    response.status(status.success).send(`Turtle deleted with ID: ${id}`);
                   }
                 },
               );
@@ -152,16 +113,13 @@ export const deleteTurtle = (request: express.Request, response: express.Respons
 
 export const getSightings = (_request: express.Request, response: express.Response): void => {
   pool.query(
-    `SELECT *
-      FROM sighting
-      WHERE is_deleted = false
-      ORDER BY time_seen DESC`,
+    queries.getSightings,
     [],
     (error: Error, results: QueryResult<QueryResultRow>) => {
       if (error) {
-        response.status(400).json(error.message);
+        response.status(status.error).json(error.message);
       } else {
-        response.status(200).json(results.rows);
+        response.status(status.success).json(results.rows);
       }
     },
   );
@@ -171,15 +129,13 @@ export const getSightingById = (request: express.Request, response: express.Resp
   const id = parseInt(request.params.id);
 
   pool.query(
-    `SELECT *
-      FROM sighting
-      WHERE id = $1 AND is_deleted = false`,
+    queries.getSightingById,
     [id],
     (error: Error, results: QueryResult<QueryResultRow>) => {
       if (error) {
-        response.status(400).json(error.message);
+        response.status(status.error).json(error.message);
       } else {
-        response.status(200).json(results.rows);
+        response.status(status.success).json(results.rows);
       }
     },
   );
@@ -189,15 +145,13 @@ export const createSighting = (request: express.Request, response: express.Respo
   const { turtleId, time, location, latitude, longitude, length, notes } = request.body;
 
   pool.query(
-    `INSERT INTO sighting (turtle_id, time_seen, turtle_location, latitude, longitude, carapace_length, notes)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING id`,
+    queries.createSighting,
     [turtleId, time, location, latitude, longitude, length, notes],
     (error: Error, results: QueryResult<{ id: number }>) => {
       if (error) {
-        response.status(400).json(error.message);
+        response.status(status.error).json(error.message);
       } else {
-        response.status(201).send(`${results.rows[0].id}`);
+        response.status(status.created).send(`${results.rows[0].id}`);
       }
     },
   );
@@ -208,15 +162,13 @@ export const updateSighting = (request: express.Request, response: express.Respo
   const { turtleId, time, location, latitude, longitude, length, notes } = request.body;
 
   pool.query(
-    `UPDATE sighting
-      SET turtle_id = $1, time_seen = $2, turtle_location = $3, latitude = $4, longitude = $5, carapace_length = $6, notes = $7
-      WHERE id = $8`,
+    queries.updateSighting,
     [turtleId, time, location, latitude, longitude, length, notes, id],
     (error: Error) => {
       if (error) {
-        response.status(400).json(error.message);
+        response.status(status.error).json(error.message);
       } else {
-        response.status(200).send(`Sighting modified with ID: ${id}`);
+        response.status(status.success).send(`Sighting modified with ID: ${id}`);
       }
     },
   );
@@ -226,24 +178,20 @@ export const deleteSighting = (request: express.Request, response: express.Respo
   const id = parseInt(request.params.id);
 
   pool.query(
-    `UPDATE sighting
-      SET is_deleted = true
-      WHERE id = $1`,
+    queries.deleteSighting,
     [id],
     (sightingError: Error) => {
       if (sightingError) {
-        response.status(400).json(sightingError);
+        response.status(status.error).json(sightingError);
       } else {
         pool.query(
-          `UPDATE photo
-            SET is_deleted = true
-            WHERE sighting_id = $1`,
+          queries.deletePhoto,
           [id],
           (photoError: Error) => {
             if (photoError) {
-              response.status(400).json(photoError);
+              response.status(status.error).json(photoError);
             } else {
-              response.status(200).send(`Sighting deleted with ID: ${id}`);
+              response.status(status.success).send(`Sighting deleted with ID: ${id}`);
             }
           },
         );
@@ -259,10 +207,7 @@ export const getSightingByTurtleId = (
   const turtleId = parseInt(request.params.turtleId);
 
   pool.query(
-    `SELECT *
-      FROM turtle, sighting
-      WHERE turtle.id = turtle_id AND turtle_id = $1 AND turtle.is_deleted = false AND sighting.is_deleted = false
-      ORDER BY time_seen DESC`,
+    queries.getSightingByTurtleId,
     [turtleId],
     (error: Error, results: QueryResult<QueryResultRow>) => {
       if (error) {
@@ -276,9 +221,7 @@ export const getSightingByTurtleId = (
 
 export const getRecentSightings = (_request: express.Request, response: express.Response): void => {
   pool.query(
-    `SELECT DISTINCT ON (turtle_id) turtle_id, time_seen, latitude, longitude
-      FROM sighting
-      ORDER BY turtle_id, time_seen DESC`,
+    queries.getRecentSightings,
     [],
     (error: Error, results: QueryResult<QueryResultRow>) => {
       if (error) {
