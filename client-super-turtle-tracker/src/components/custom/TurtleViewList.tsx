@@ -2,13 +2,14 @@ import useAxios from "axios-hooks";
 import * as React from "react";
 import { FlatList } from "react-native";
 import { BACKEND_SECRET, BASE_URL } from "../../../env";
+import { TurtleSightingPhoto } from "../../utils/interfaces";
 import { View } from "../reusables";
 import { PhotoList } from "./PhotoList";
 import { SightingCard } from "./SightingCard";
 import { TurtleCard } from "./TurtleCard";
 
 export const TurtleViewList = ({ turtleId }: { turtleId: number }): JSX.Element => {
-  const [{ data, loading, error }, refetch] = useAxios({
+  const [{ data, loading, error }, refetch] = useAxios<TurtleSightingPhoto>({
     headers: { Authorization: `Bearer ${BACKEND_SECRET}` },
     url: `${BASE_URL}/turtle/sighting/photo/${turtleId}`,
   });
