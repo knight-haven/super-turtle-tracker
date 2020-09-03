@@ -22,7 +22,7 @@ export const TurtleListItem = ({ turtle }: { turtle: Turtle }): JSX.Element => {
         return <Avatar.Image {...props} source={turtle.url === null ? {} : { uri: turtle.url }} />;
       }}
       onPress={() => {
-        navigation?.navigate("TurtleViewScreen", { turtleId: turtle.id });
+        navigation.navigate("TurtleViewScreen", { turtleId: turtle.id });
       }}
       right={(props) => {
         return <List.Icon {...props} icon="chevron-right" />;

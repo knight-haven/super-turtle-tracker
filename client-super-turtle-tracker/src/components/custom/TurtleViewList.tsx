@@ -23,10 +23,15 @@ export const TurtleViewList = ({ turtleId }: { turtleId: number }): JSX.Element 
             return item.id.toString();
           }}
           ListHeaderComponent={() => {
+            const recentSighting = data.sightings[0];
+            const oldestSighting = data.sightings[data.sightings.length - 1];
+            const dateFound = oldestSighting.time;
+            const dateLastSeen = recentSighting.time;
+            const recentLength = recentSighting.length;
             const turtleCardData = {
-              dateFound: data.sightings[data.sightings.length - 1].time,
-              dateLastSeen: data.sightings[0].time,
-              length: data.sightings[0].length,
+              dateFound,
+              dateLastSeen,
+              length: recentLength,
               mark: data.turtle.mark,
               number: data.turtle.number,
               sex: data.turtle.sex,
