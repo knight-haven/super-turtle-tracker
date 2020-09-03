@@ -29,10 +29,19 @@ export const deleteSighting = `
   WHERE id = $1
 `;
 
+export const deleteSightingByTurtleId = `
+  UPDATE sighting
+  SET is_deleted = true
+  WHERE turtle_id = $1
+`;
+
 export const getSightingByTurtleId = `
   SELECT *
   FROM turtle, sighting
-  WHERE turtle.id = turtle_id AND turtle_id = $1 AND turtle.is_deleted = false AND sighting.is_deleted = false
+  WHERE turtle.id = turtle_id
+    AND turtle_id = $1
+    AND turtle.is_deleted = false
+    AND sighting.is_deleted = false
   ORDER BY time_seen DESC
 `;
 
