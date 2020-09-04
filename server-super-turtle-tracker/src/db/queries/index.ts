@@ -1,3 +1,3 @@
-export * from "./photo";
-export * from "./sighting";
-export * from "./turtle";
+export * from "./photoQueries";
+export * from "./sightingQueries";
+export * from "./turtleQueries";
