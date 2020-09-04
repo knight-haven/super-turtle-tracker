@@ -56,6 +56,7 @@ app.all("*", (req, res, next) => {
     app.delete("/photo/:id", db.deletePhoto);
     app.get("/photo/turtle/:turtleId", db.getPhotoByTurtleId);
     app.get("/photo/sighting/:sightingId", db.getPhotoBySightingId);
+    app.get("/turtle/sighting/photo/:turtleId", db.getTurtleSightingsAndPhotosByTurtleId);
     app.get("/email/:address", db.sendEmail);
     next(); // Go onto the queries.
   } else {

@@ -1,7 +1,7 @@
 import useAxios from "axios-hooks";
 import * as React from "react";
 import { FlatList } from "react-native";
-import { View } from ".";
+import { View } from "../reusables";
 import { BACKEND_SECRET, BASE_URL } from "../../../env";
 import { TurtleListItem } from "./TurtleListItem";
 

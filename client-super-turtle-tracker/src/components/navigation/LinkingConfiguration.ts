@@ -9,6 +9,7 @@ export const LinkingConfiguration = {
           List: {
             screens: {
               ListScreen: "two",
+              TurtleViewScreen: "three",
             },
           },
           Map: {
