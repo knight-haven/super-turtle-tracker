@@ -30,6 +30,7 @@ module.exports = {
       },
     ],
     "import/no-unresolved": "off",
+    "import/order": "off",
     radix: "off",
   },
 };

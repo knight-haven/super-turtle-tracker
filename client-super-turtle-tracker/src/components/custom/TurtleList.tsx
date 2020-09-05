@@ -4,9 +4,10 @@ import { FlatList } from "react-native";
 import { View } from "../reusables";
 import { BACKEND_SECRET, BASE_URL } from "../../../env";
 import { TurtleListItem } from "./TurtleListItem";
+import { Turtle } from "../../utils/interfaces/Turtle";
 
 export const TurtleList = (): JSX.Element => {
-  const [{ data, loading, error }, refetch] = useAxios({
+  const [{ data, loading, error }, refetch] = useAxios<Turtle[]>({
     headers: { Authorization: `Bearer ${BACKEND_SECRET}` },
     url: `${BASE_URL}/turtle`,
   });
