@@ -1,12 +1,12 @@
 export const getSightings = `
-  SELECT *
+  SELECT id, time_seen as time, turtle_location as location, latitude, longitude, carapace_length as length, notes
   FROM sighting
   WHERE is_deleted = false
   ORDER BY time_seen DESC
 `;
 
 export const getSightingById = `
-  SELECT *
+  SELECT id, time_seen as time, turtle_location as location, latitude, longitude, carapace_length as length, notes
   FROM sighting
   WHERE id = $1 AND is_deleted = false
 `;
@@ -36,12 +36,9 @@ export const deleteSightingByTurtleId = `
 `;
 
 export const getSightingByTurtleId = `
-  SELECT *
-  FROM turtle, sighting
-  WHERE turtle.id = turtle_id
-    AND turtle_id = $1
-    AND turtle.is_deleted = false
-    AND sighting.is_deleted = false
+  SELECT id, time_seen as time, turtle_location as location, latitude, longitude, carapace_length as length, notes
+  FROM sighting
+  WHERE turtle_id = $1 AND is_deleted = false
   ORDER BY time_seen DESC
 `;
 

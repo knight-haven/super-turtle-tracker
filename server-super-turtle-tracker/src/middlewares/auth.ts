@@ -6,7 +6,7 @@ dotenv.config();
 
 const SECRET = process.env.BACKEND_SECRET;
 
-export default (
+const verifyAuth = (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction,
@@ -26,3 +26,5 @@ export default (
     response.status(status.UNAUTHORIZED).json("Unauthorized Request");
   }
 };
+
+export default verifyAuth;

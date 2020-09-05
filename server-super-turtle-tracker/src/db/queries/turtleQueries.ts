@@ -12,7 +12,7 @@ export const getTurtles = `
 `;
 
 export const getTurtleById = `
-  SELECT *
+  SELECT id, turtle_number as number, mark, sex
   FROM turtle
   WHERE id = $1 AND is_deleted = false
 `;

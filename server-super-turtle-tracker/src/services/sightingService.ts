@@ -1,4 +1,5 @@
 import pool from "../db/pool";
+import { ID, Sighting } from "../interfaces";
 import status = require("http-status");
 import queries = require("../db/queries");
 import express = require("express");
@@ -8,7 +9,7 @@ export const getSightings = async (
   response: express.Response,
 ): Promise<void> => {
   try {
-    const results = await pool.query(queries.getSightings);
+    const results = await pool.query<Sighting>(queries.getSightings);
     response.status(status.OK).json(results.rows);
   } catch (error) {
     response.status(status.INTERNAL_SERVER_ERROR).json(error.message);
@@ -21,7 +22,7 @@ export const getSightingById = async (
 ): Promise<void> => {
   try {
     const id = parseInt(request.params.id);
-    const results = await pool.query(queries.getSightingById, [id]);
+    const results = await pool.query<Sighting>(queries.getSightingById, [id]);
     response.status(status.OK).json(results.rows);
   } catch (error) {
     response.status(status.INTERNAL_SERVER_ERROR).json(error.message);
@@ -34,7 +35,7 @@ export const createSighting = async (
 ): Promise<void> => {
   const { turtleId, time, location, latitude, longitude, length, notes } = request.body;
   try {
-    const results = await pool.query(queries.createSighting, [
+    const results = await pool.query<ID>(queries.createSighting, [
       turtleId,
       time,
       location,
@@ -92,7 +93,7 @@ export const getSightingByTurtleId = async (
 ): Promise<void> => {
   try {
     const turtleId = parseInt(request.params.turtleId);
-    const results = await pool.query(queries.getSightingByTurtleId, [turtleId]);
+    const results = await pool.query<Sighting>(queries.getSightingByTurtleId, [turtleId]);
     response.status(status.OK).json(results.rows);
   } catch (error) {
     response.status(status.INTERNAL_SERVER_ERROR).json(error.message);
@@ -104,7 +105,7 @@ export const getRecentSightings = async (
   response: express.Response,
 ): Promise<void> => {
   try {
-    const results = await pool.query(queries.getRecentSightings);
+    const results = await pool.query<Sighting>(queries.getRecentSightings);
     response.status(status.OK).json(results.rows);
   } catch (error) {
     response.status(status.INTERNAL_SERVER_ERROR).json(error.message);

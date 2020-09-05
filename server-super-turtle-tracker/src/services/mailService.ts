@@ -12,7 +12,7 @@ dotenv.config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
-export default async (request: express.Request, response: express.Response): Promise<void> => {
+const sendMail = async (request: express.Request, response: express.Response): Promise<void> => {
   const emailAddress = request.params.address;
 
   try {
@@ -59,3 +59,5 @@ export default async (request: express.Request, response: express.Response): Pro
     response.status(status.INTERNAL_SERVER_ERROR).json(error.message);
   }
 };
+
+export default sendMail;

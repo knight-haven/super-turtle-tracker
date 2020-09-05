@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import { StyleSheet } from "react-native";
 import { Avatar, List } from "react-native-paper";
@@ -12,11 +13,16 @@ const styles = StyleSheet.create({
 });
 
 export const TurtleListItem = ({ turtle }: { turtle: Turtle }): JSX.Element => {
+  const navigation = useNavigation();
+
   return (
     <List.Item
       description={capitalizeFirstLetter(turtle.sex)}
       left={(props) => {
         return <Avatar.Image {...props} source={turtle.url === null ? {} : { uri: turtle.url }} />;
+      }}
+      onPress={() => {
+        navigation.navigate("TurtleViewScreen", { turtleId: turtle.id });
       }}
       right={(props) => {
         return <List.Icon {...props} icon="chevron-right" />;

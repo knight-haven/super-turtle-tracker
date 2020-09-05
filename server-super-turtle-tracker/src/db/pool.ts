@@ -3,7 +3,7 @@ import Pool = require("pg");
 
 dotenv.config();
 
-export default new Pool.Pool({
+const pool = new Pool.Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
   database: process.env.PG_DB,
@@ -12,3 +12,5 @@ export default new Pool.Pool({
   max: parseInt(process.env.PG_MAX || ""),
   min: parseInt(process.env.PG_MIN || ""),
 });
+
+export default pool;

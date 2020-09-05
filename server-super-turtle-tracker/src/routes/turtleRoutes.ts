@@ -9,5 +9,6 @@ router.get("/:id", verifyAuth, TurtleService.getTurtleById);
 router.post("/", verifyAuth, TurtleService.createTurtle);
 router.put("/:id", verifyAuth, TurtleService.updateTurtle);
 router.delete("/:id", verifyAuth, TurtleService.deleteTurtle);
+router.get("/sighting/photo/:turtleId", TurtleService.getTurtleSightingsAndPhotosByTurtleId);
 
 export default router;
